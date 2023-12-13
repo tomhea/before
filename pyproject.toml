@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "before"
-version = "1.0.1"
+version = "1.0.2"
 description = "import from python2"
 authors = ["Tom Herman <flipjumpproject@gmail.com>"]
 license = "BSD-2-Clause-Simplified"

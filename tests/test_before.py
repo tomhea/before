@@ -1,5 +1,9 @@
 import operator
+import sys
+from io import StringIO
 from pathlib import Path
+from string import printable
+from tempfile import TemporaryDirectory
 
 from before import (
     reduce, reload, intern,
@@ -7,11 +11,6 @@ from before import (
     map, filter, round,
     cmp, apply, execfile,
 )
-
-from tempfile import TemporaryDirectory
-import sys
-from io import StringIO
-from string import printable
 
 
 def test_reduce():
@@ -33,28 +32,27 @@ def test_intern():
 
 
 def test_reload(capsys):
-    with TemporaryDirectory() as dir:
-        sys.path.append(dir)
-        path = Path(dir) / 'ggggg.py'
+    with TemporaryDirectory() as dir_path:
+        sys.path.append(dir_path)
+        path = Path(dir_path) / 'ggggg.py'
 
         with path.open('w') as f:
             f.write('print(7)\n')
 
-        import ggggg
+        import ggggg  # type: ignore[import-not-found]
         assert capsys.readouterr().out == "7\n"
         for _ in range(10):
-            import ggggg
+            import ggggg  # type: ignore[import-not-found]
             assert capsys.readouterr().out == ""
 
         reload(ggggg)
-        import ggggg
         assert capsys.readouterr().out == "7\n"
-        import ggggg
+        import ggggg  # type: ignore[import-not-found]
         assert capsys.readouterr().out == ""
 
         for _ in range(10):
             reload(ggggg)
-            import ggggg
+            import ggggg  # type: ignore[import-not-found]
             assert capsys.readouterr().out == "7\n"
 
 
@@ -129,8 +127,8 @@ def test_apply():
 
 
 def test_execfile(capsys):
-    with TemporaryDirectory() as dir:
-        path = Path(dir) / 'file.py'
+    with TemporaryDirectory() as dir_path:
+        path = Path(dir_path) / 'file.py'
         with path.open('w') as f:
             f.write('print(4+8, 3)\nprint(list(range(10)))\n')
         execfile(str(path))
